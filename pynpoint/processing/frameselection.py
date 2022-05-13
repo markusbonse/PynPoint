@@ -664,7 +664,7 @@ class FrameSimilarityModule(ProcessingModule):
     Pipeline module for measuring the similarity between frames.
     """
 
-    __author__ = 'Benedikt Schmidhuber, Tomas Stolker'
+    __author__ = 'Benedikt Schmidhuber, Tomas Stolker, Markus Bonse'
 
     @typechecked
     def __init__(self,
@@ -726,14 +726,11 @@ class FrameSimilarityModule(ProcessingModule):
 
     @staticmethod
     @typechecked
-    def _similarity(images: np.ndarray,
-                    reference_index: int,
-                    mode: str,
-                    window_size: int,
-                    temporal_median: Union[bool, np.ndarray] = False) -> Tuple[int, float]:
-        """
-        Internal function to compute the MSE as defined by Ruane et al. 2019.
-        """
+    def _similarity_full(images: np.ndarray,
+                         reference_index: int,
+                         mode: str,
+                         window_size: int,
+                         temporal_median: Union[bool, np.ndarray] = False) -> Tuple[int, float]:
 
         @typechecked
         def _temporal_median(reference_index: int,
@@ -753,6 +750,21 @@ class FrameSimilarityModule(ProcessingModule):
             image_m = _temporal_median(reference_index, images=images)
         else:
             image_m = temporal_median
+
+        return FrameSimilarityModule._similarity(image_x_i,
+                                                 image_m,
+                                                 mode,
+                                                 window_size)
+
+    @staticmethod
+    @typechecked
+    def _similarity(image_x_i: np.ndarray,
+                    image_m: np.ndarray,
+                    mode: str,
+                    window_size: int) -> Tuple[int, float]:
+        """
+        Internal function to compute the MSE as defined by Ruane et al. 2019.
+        """
 
         if mode == 'MSE':
             return reference_index, mean_squared_error(image_x_i, image_m)
@@ -822,13 +834,23 @@ class FrameSimilarityModule(ProcessingModule):
         pool = mp.Pool(cpu)
         async_results = []
 
-        for i in range(nimages):
-            async_results.append(pool.apply_async(FrameSimilarityModule._similarity,
-                                                  args=(images,
-                                                        i,
-                                                        self.m_method,
-                                                        self.m_window_size,
-                                                        temporal_median)))
+        if self.m_temporal_median == 'constant':
+            for i in range(nimages):
+                async_results.append(
+                    pool.apply_async(FrameSimilarityModule._similarity,
+                                     args=(images[i],
+                                           temporal_median,
+                                           self.m_method,
+                                           self.m_window_size)))
+        else:
+            for i in range(nimages):
+                async_results.append(
+                    pool.apply_async(FrameSimilarityModule._similarity_full,
+                                     args=(images,
+                                           i,
+                                           self.m_method,
+                                           self.m_window_size,
+                                           temporal_median)))
 
         pool.close()
 
