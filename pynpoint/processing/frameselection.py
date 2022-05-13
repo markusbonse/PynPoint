@@ -752,6 +752,7 @@ class FrameSimilarityModule(ProcessingModule):
             image_m = temporal_median
 
         return FrameSimilarityModule._similarity(image_x_i,
+                                                 reference_index,
                                                  image_m,
                                                  mode,
                                                  window_size)
@@ -759,6 +760,7 @@ class FrameSimilarityModule(ProcessingModule):
     @staticmethod
     @typechecked
     def _similarity(image_x_i: np.ndarray,
+                    reference_index: int,
                     image_m: np.ndarray,
                     mode: str,
                     window_size: int) -> Tuple[int, float]:
@@ -839,6 +841,7 @@ class FrameSimilarityModule(ProcessingModule):
                 async_results.append(
                     pool.apply_async(FrameSimilarityModule._similarity,
                                      args=(images[i],
+                                           i,
                                            temporal_median,
                                            self.m_method,
                                            self.m_window_size)))
