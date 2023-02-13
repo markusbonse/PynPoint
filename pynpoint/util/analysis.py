@@ -12,7 +12,7 @@ from typeguard import typechecked
 from scipy.stats import t
 from scipy.ndimage import gaussian_filter
 from skimage.feature import hessian_matrix
-from photutils import aperture_photometry, CircularAperture
+from photutils.aperture import aperture_photometry, CircularAperture
 
 from pynpoint.util.image import shift_image, center_subpixel, pixel_distance, select_annulus, \
                                 cartesian_to_polar, create_mask
