@@ -9,6 +9,7 @@ import warnings
 from copy import deepcopy
 from typing import List, Optional, Tuple, Union
 
+from threadpoolctl import threadpool_limits
 import numpy as np
 
 from scipy.ndimage import rotate
@@ -551,7 +552,8 @@ class PcaPsfSubtractionModule(ProcessingModule):
 
             # create the PCA basis
             print('Constructing PSF model...', end='')
-            self.m_pca.fit(ref_reshape)
+            with threadpool_limits(limits=cpu, user_api='blas'):
+                self.m_pca.fit(ref_reshape)
 
             # add mean of reference array as 1st PC and orthogonalize it with respect to
             # the other principal components
@@ -588,7 +590,8 @@ class PcaPsfSubtractionModule(ProcessingModule):
         # Running multiprocessed PCA analysis
         else:
             print('Creating residuals', end='')
-            self._run_multi_processing(star_reshape, im_shape, indices)
+            with threadpool_limits(limits=1, user_api='blas'):
+                self._run_multi_processing(star_reshape, im_shape, indices)
             print(' [DONE]')
 
         # write history

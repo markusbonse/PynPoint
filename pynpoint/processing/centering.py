@@ -8,6 +8,7 @@ import warnings
 
 from typing import Optional, Tuple, Union
 
+from threadpoolctl import threadpool_limits
 import numpy as np
 
 from astropy.modeling import fitting, models
@@ -125,17 +126,18 @@ class StarAlignmentModule(ProcessingModule):
             pixscale = self.m_image_in_port.get_attribute('PIXSCALE')
             self.m_subframe = int(self.m_subframe/pixscale)
 
-        self.apply_function_to_images(align_image,
-                                      self.m_image_in_port,
-                                      self.m_image_out_port,
-                                      'Aligning images',
-                                      func_args=(self.m_interpolation,
-                                                 self.m_accuracy,
-                                                 self.m_resize,
-                                                 self.m_num_references,
-                                                 self.m_subframe,
-                                                 ref_images.reshape(-1),
-                                                 ref_images.shape))
+        with threadpool_limits(limits=1, user_api='blas'):
+            self.apply_function_to_images(align_image,
+                                          self.m_image_in_port,
+                                          self.m_image_out_port,
+                                          'Aligning images',
+                                          func_args=(self.m_interpolation,
+                                                     self.m_accuracy,
+                                                     self.m_resize,
+                                                     self.m_num_references,
+                                                     self.m_subframe,
+                                                     ref_images.reshape(-1),
+                                                     ref_images.shape))
 
         self.m_image_out_port.copy_attributes(self.m_image_in_port)
 

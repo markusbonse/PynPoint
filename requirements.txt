@@ -12,3 +12,4 @@ scipy>=1.8.0
 statsmodels>=0.13.0
 tqdm>=4.64.0
 typeguard>=2.13.0
+threadpoolctl
