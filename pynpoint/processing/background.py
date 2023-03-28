@@ -403,7 +403,9 @@ class NoddingBackgroundModule(ProcessingModule):
         mode : str
             Sky images that are subtracted, relative to the science images. Either the next,
             previous, or average of the next and previous cubes of sky frames can be used by
-            choosing 'next', 'previous', or 'both', respectively.
+            choosing 'next', 'previous', or 'both', respectively. As an alternative the mode
+            "best_fit" can be used to select either the 'next' or the 'previous' depending
+            on their error w.r.t. the science frame.
 
         Returns
         -------
@@ -419,7 +421,7 @@ class NoddingBackgroundModule(ProcessingModule):
 
         self.m_time_stamps = []
 
-        if mode in ['next', 'previous', 'both']:
+        if mode in ['next', 'previous', 'both', 'best_fit']:
             self.m_mode = mode
         else:
             raise ValueError('Mode needs to be \'next\', \'previous\', or \'both\'.')
@@ -516,6 +518,22 @@ class NoddingBackgroundModule(ProcessingModule):
             next_sky = search_for_next_sky()
 
             return (previous_sky+next_sky)/2.
+
+        if self.m_mode == 'best_fit':
+            previous_sky = search_for_previous_sky()
+            next_sky = search_for_next_sky()
+
+            time_entry = self.m_time_stamps[index_of_science_data]
+            science = np.mean(
+                self.m_science_in_port[time_entry.m_index, ], axis=0)
+
+            error_prev = np.median(np.abs(previous_sky - science))
+            error_next = np.median(np.abs(next_sky - science))
+
+            if error_prev > error_next:
+                return next_sky
+            else:
+                return previous_sky
 
     @typechecked
     def run(self) -> None:
