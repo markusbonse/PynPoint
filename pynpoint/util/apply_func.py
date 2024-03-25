@@ -93,6 +93,7 @@ def align_image(image_in: np.ndarray,
     # The original shape can not be used directly because of util.module.update_arguments
     ref_images = ref_images_reshape.reshape(ref_images_shape)
 
+    all_offsets = []
     for i in range(num_references):
         if subframe is None:
             tmp_offset, _, _ = phase_cross_correlation(ref_images[i, :, :],
@@ -108,9 +109,12 @@ def align_image(image_in: np.ndarray,
                                                        sub_in,
                                                        normalization=None,
                                                        upsample_factor=accuracy)
-        offset += tmp_offset
 
-    offset /= float(num_references)
+        all_offsets.append(tmp_offset)
+        #offset += tmp_offset
+
+    offset = np.median(np.array(all_offsets), axis=0)
+    #offset /= float(num_references)
 
     if resize is not None:
         offset *= resize
