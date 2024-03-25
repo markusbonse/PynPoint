@@ -21,7 +21,7 @@ def postprocessor(images: np.ndarray,
                   pca_sklearn: PCA = None,
                   im_shape: Union[None, tuple] = None,
                   indices: np.ndarray = None,
-                  mask: np.ndarray = None,
+                  mask: Optional[np.ndarray] = None,
                   processing_type: str = 'ADI'):
 
     """
