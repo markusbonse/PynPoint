@@ -111,9 +111,27 @@ def align_image(image_in: np.ndarray,
                                                        upsample_factor=accuracy)
 
         all_offsets.append(tmp_offset)
-        #offset += tmp_offset
 
-    offset = np.median(np.array(all_offsets), axis=0)
+    offset_array = np.array(all_offsets)
+    offset_median = np.median(offset_array, axis=0)
+
+    print(f'Offset median: {offset_median}')
+    print(f'Offsets: {all_offsets}')
+
+    # check for individual offsets that are too far from the median
+    distances_x = np.abs(offset_array - offset_median)[:, 0]
+    distances_y = np.abs(offset_array - offset_median)[:, 1]
+
+    print(f'Distances x: {distances_x}')
+    print(f'Distances y: {distances_y}')
+
+    # if the distance is larger than 2 pixel, set the offset to the median
+    offset_array = offset_array[np.logical_and(
+        distances_x < 2,
+        distances_y < 2)]
+
+    offset = np.mean(offset_array, axis=0)
+    print(f'Final Offset: {offset}')
     #offset /= float(num_references)
 
     if resize is not None:
