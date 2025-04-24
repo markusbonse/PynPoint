@@ -269,7 +269,9 @@ def update_arguments(index: int,
         args_out = []
 
         for item in args_in:
-            if isinstance(item, np.ndarray) and item.shape[0] == nimages:
+            if (isinstance(item, np.ndarray) and
+                    (item.shape[0] == nimages) and
+                    (nimages > 2)):
                 args_out.append(item[index])
 
             else:
