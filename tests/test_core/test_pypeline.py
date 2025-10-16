@@ -58,7 +58,7 @@ class TestPypeline:
             for _ in f_obj:
                 count += 1
 
-        assert count == 25
+        assert count == 29
 
     def test_create_none_config(self) -> None:
 

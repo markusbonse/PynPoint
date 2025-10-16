@@ -89,7 +89,7 @@ class TestExtract:
         with pytest.warns(UserWarning) as warning:
             self.pipeline.run_module("extract1")
 
-        assert len(warning) == 3
+        assert len(warning) == 7
 
         assert (
             warning[0].message.args[0]
@@ -104,7 +104,31 @@ class TestExtract:
         )
 
         assert (
-            warning[2].message.args[0] == "Can not store the attribute 'History: "
+            warning[2].message.args[0]
+            == "Can not store the attribute 'WIN_SIZE_X' because "
+            "the dataset 'index' does not exist."
+        )
+
+        assert (
+            warning[3].message.args[0]
+            == "Can not store the attribute 'WIN_SIZE_Y' because "
+            "the dataset 'index' does not exist."
+        )
+
+        assert (
+            warning[4].message.args[0]
+            == "Can not store the attribute 'WIN_START_X' because "
+            "the dataset 'index' does not exist."
+        )
+
+        assert (
+            warning[5].message.args[0]
+            == "Can not store the attribute 'WIN_START_Y' because "
+            "the dataset 'index' does not exist."
+        )
+
+        assert (
+            warning[6].message.args[0] == "Can not store the attribute 'History: "
             "StarExtractionModule' because the dataset "
             "'index' does not exist."
         )
@@ -132,7 +156,7 @@ class TestExtract:
         with pytest.warns(UserWarning) as warning:
             self.pipeline.run_module("extract2")
 
-        assert len(warning) == 3
+        assert len(warning) == 7
 
         assert (
             warning[0].message.args[0]
@@ -147,7 +171,31 @@ class TestExtract:
         )
 
         assert (
-            warning[2].message.args[0] == "Can not store the attribute 'History: "
+            warning[2].message.args[0]
+            == "Can not store the attribute 'WIN_SIZE_X' because "
+            "the dataset 'index' does not exist."
+        )
+
+        assert (
+            warning[3].message.args[0]
+            == "Can not store the attribute 'WIN_SIZE_Y' because "
+            "the dataset 'index' does not exist."
+        )
+
+        assert (
+            warning[4].message.args[0]
+            == "Can not store the attribute 'WIN_START_X' because "
+            "the dataset 'index' does not exist."
+        )
+
+        assert (
+            warning[5].message.args[0]
+            == "Can not store the attribute 'WIN_START_Y' because "
+            "the dataset 'index' does not exist."
+        )
+
+        assert (
+            warning[6].message.args[0] == "Can not store the attribute 'History: "
             "StarExtractionModule' because the dataset "
             "'index' does not exist."
         )

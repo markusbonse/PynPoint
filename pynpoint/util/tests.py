@@ -136,6 +136,10 @@ def create_fits(
     header["HIERARCH ESO ADA POSANG END"] = 180.0
     header["HIERARCH ESO SEQ CUMOFFSETX"] = dither_x
     header["HIERARCH ESO SEQ CUMOFFSETY"] = dither_y
+    header["HIERARCH ESO DET WIN STARTX"] = 0
+    header["HIERARCH ESO DET WIN STARTY"] = 0
+    header["HIERARCH ESO DET WIN NX"] = image.shape[0]
+    header["HIERARCH ESO DET WIN NY"] = image.shape[1]
     hdu.data = image
     hdu.writeto(os.path.join(path, filename))
 
@@ -303,6 +307,11 @@ def create_star_data(path: str, npix: int = 11, pos_star: float = 5.0) -> None:
         header["HIERARCH ESO ADA POSANG END"] = parang_end[j]
         header["HIERARCH ESO SEQ CUMOFFSETX"] = "None"
         header["HIERARCH ESO SEQ CUMOFFSETY"] = "None"
+        header["HIERARCH ESO DET WIN STARTX"] = 0
+        header["HIERARCH ESO DET WIN STARTY"] = 0
+        header["HIERARCH ESO DET WIN NX"] = npix
+        header["HIERARCH ESO DET WIN NY"] = npix
+
         hdu.data = images
         hdu.writeto(os.path.join(path, f"images_{j}.fits"))
 
@@ -409,6 +418,10 @@ def create_waffle_data(path: str) -> None:
     header["HIERARCH ESO ADA POSANG END"] = "None"
     header["HIERARCH ESO SEQ CUMOFFSETX"] = "None"
     header["HIERARCH ESO SEQ CUMOFFSETY"] = "None"
+    header["HIERARCH ESO DET WIN STARTX"] = 0
+    header["HIERARCH ESO DET WIN STARTY"] = 0
+    header["HIERARCH ESO DET WIN NX"] = npix
+    header["HIERARCH ESO DET WIN NY"] = npix
     hdu.data = image
     hdu.writeto(os.path.join(path, "images.fits"))
 
@@ -483,6 +496,10 @@ def create_near_data(path: str) -> None:
         primary_header["HIERARCH ESO DET CHOP ST"] = "T"
         primary_header["HIERARCH ESO DET CHOP CYCSKIP"] = 0
         primary_header["HIERARCH ESO DET CHOP CYCSUM"] = "F"
+        primary_header["HIERARCH ESO DET WIN STARTX"] = 0
+        primary_header["HIERARCH ESO DET WIN STARTY"] = 0
+        primary_header["HIERARCH ESO DET WIN NX"] = 10
+        primary_header["HIERARCH ESO DET WIN NY"] = 10
 
         chopa_header = fits.Header()
         chopa_header["HIERARCH ESO DET FRAM TYPE"] = "HCYCLE1"

@@ -90,7 +90,7 @@ class TestCentering:
         with pytest.warns(UserWarning) as warning:
             self.pipeline.run_module("extract1")
 
-        assert len(warning) == 3
+        assert len(warning) == 7
 
         assert (
             warning[0].message.args[0] == "Can not store the attribute 'INSTRUMENT' "
