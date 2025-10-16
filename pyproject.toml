@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pynpoint"
-version = "0.11.0"
+version = "0.12.0"
 authors = [
     {name = "Tomas Stolker", email = "stolker@strw.leidenuniv.nl"},
     {name = "Markus Bonse", email = "mbonse@phys.ethz.ch"},
