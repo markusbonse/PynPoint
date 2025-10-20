@@ -18,15 +18,21 @@ from pynpoint.util.attributes import set_static_attr, set_nonstatic_attr, set_ex
 from pynpoint.util.module import progress
 
 
-def is_native_endian(
-    array: np.ndarray
-) -> bool:
-    """Return True if the array dtype matches the system endianness."""
-    # '|' means "not applicable" (e.g., uint8, bool)
+def ensure_native_endian(
+    array: np.ndarray,
+) -> np.ndarray:
+    """Return a native-endian copy of `array` if needed."""
+    if array is None:
+        return array
     byteorder = array.dtype.byteorder
-    if byteorder in ('=', '|'):
-        return True
-    return (byteorder == '<') == np.little_endian
+    if byteorder in ("=", "|"):
+        return array  # already native or no endianness
+    needs_swap = (byteorder == ">" and np.little_endian) or (
+        byteorder == "<" and not np.little_endian
+    )
+    if needs_swap:
+        return array.byteswap().view(array.dtype.newbyteorder("="))
+    return array
 
 
 class FitsReadingModule(ReadingModule):
@@ -128,9 +134,7 @@ class FitsReadingModule(ReadingModule):
         hdu_list = fits.open(fits_file)
 
         if hdu_list[0].data is not None:
-            images = hdu_list[0].data
-            if not is_native_endian(images):
-                images = images.byteswap().newbyteorder()
+            images = ensure_native_endian(hdu_list[0].data)
 
         elif len(hdu_list) > 1:
             for i, item in enumerate(hdu_list[1:]):
@@ -143,9 +147,7 @@ class FitsReadingModule(ReadingModule):
                         f"at number {i+1} instead."
                     )
 
-                    images = hdu_list[i + 1].data
-                    if not is_native_endian(images):
-                        images = images.byteswap().newbyteorder()
+                    images = ensure_native_endian(hdu_list[i + 1].data)
 
                     break
 
