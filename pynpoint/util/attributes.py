@@ -67,8 +67,13 @@ def set_static_attr(
             static.append(key)
 
     for attr in static:
-
-        fitskey = config_port.get_attribute(attr)
+        # check if the current attribute is part of the extra attributes
+        # in this case the config port can not provide the correct keyword
+        # so we directly read it from the extra attributes dictionary
+        if attr in extra_attributes:
+            fitskey = extra_attributes[attr]["value"]
+        else:
+            fitskey = config_port.get_attribute(attr)
 
         if isinstance(fitskey, np.bytes_):
             fitskey = str(fitskey.decode("utf-8"))
@@ -148,7 +153,14 @@ def set_nonstatic_attr(
 
     for attr in nonstatic:
         if attributes[attr]["config"] == "header":
-            fitskey = config_port.get_attribute(attr)
+
+            # check if the current attribute is part of the extra attributes
+            # in this case the config port can not provide the correct keyword
+            # so we directly read it from the extra attributes dictionary
+            if attr in extra_attributes:
+                fitskey = extra_attributes[attr]["value"]
+            else:
+                fitskey = config_port.get_attribute(attr)
 
             # if type(fitskey) == np.bytes_:
             #     fitskey = str(fitskey.decode('utf-8'))
