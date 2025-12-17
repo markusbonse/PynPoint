@@ -3,6 +3,7 @@ Functions for adding attributes to a dataset in the central database.
 """
 
 import warnings
+from typing import Dict, Optional, Union
 
 import numpy as np
 
@@ -20,6 +21,7 @@ def set_static_attr(
     config_port: ConfigPort,
     image_out_port: OutputPort,
     check: bool = True,
+    extra_attributes: Optional[Dict[str, Dict[str, Union[str, float, int, None]]]] = None,
 ) -> None:
     """
     Function which adds the static attributes to the central database.
@@ -38,6 +40,13 @@ def set_static_attr(
         Print a warning if certain attributes from the configuration file are not present in
         the FITS header. If set to `False`, attributes are still written to the dataset but
         there will be no warning if a keyword is not found in the FITS header.
+    extra_attributes : dict
+        By default Pynpoint only reads attributes pre-defined in the
+        `get_attributes` function. These only include common attributes such as RA, DEC,
+        DIT, NDIT, etc. If the user wants to read additional attributes from the FITS
+        header, these can be provided as a dictionary in the same format as the output
+        of the `get_attributes` function. This dictionary is then merged with the default
+        attributes before reading the static attributes from the FITS header.
 
     Returns
     -------
@@ -46,6 +55,11 @@ def set_static_attr(
     """
 
     attributes = get_attributes()
+
+    if extra_attributes is None:
+        extra_attributes = {}
+
+    attributes.update(extra_attributes)
 
     static = []
     for key, value in attributes.items():
@@ -89,6 +103,7 @@ def set_nonstatic_attr(
     config_port: ConfigPort,
     image_out_port: OutputPort,
     check: bool = True,
+    extra_attributes: Optional[Dict[str, Dict[str, Union[str, float, int, None]]]] = None,
 ) -> None:
     """
     Function which adds the non-static attributes to the central database.
@@ -101,6 +116,17 @@ def set_nonstatic_attr(
         Configuration port.
     image_out_port : pynpoint.core.dataio.OutputPort
         Output port of the images to which the non-static attributes are stored.
+    check : bool
+        Print a warning if certain attributes from the configuration file are not present in
+        the FITS header. If set to `False`, attributes are still written to the dataset but
+        there will be no warning if a keyword is not found in the FITS header.
+    extra_attributes : dict
+        By default Pynpoint only reads attributes pre-defined in the
+        `get_attributes` function. These only include common attributes such as RA, DEC,
+        DIT, NDIT, etc. If the user wants to read additional attributes from the FITS
+        header, these can be provided as a dictionary in the same format as the output
+        of the `get_attributes` function. This dictionary is then merged with the default
+        attributes before reading the non-static attributes from the FITS header.
 
     Returns
     -------
@@ -109,6 +135,11 @@ def set_nonstatic_attr(
     """
 
     attributes = get_attributes()
+
+    if extra_attributes is None:
+        extra_attributes = {}
+
+    attributes.update(extra_attributes)
 
     nonstatic = []
     for key, value in attributes.items():

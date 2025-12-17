@@ -6,7 +6,7 @@ import os
 import time
 import warnings
 
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Dict
 
 import numpy as np
 
@@ -60,6 +60,8 @@ class FitsReadingModule(ReadingModule):
         check: bool = True,
         filenames: Optional[Union[str, List[str]]] = None,
         ifs_data: bool = False,
+        extra_attributes: Optional[
+            Dict[str, Dict[str, Union[str, float, int, None]]]] = None,
     ) -> None:
         """
         Parameters
@@ -88,6 +90,12 @@ class FitsReadingModule(ReadingModule):
             Import IFS data which is stored as a 4D array with the wavelength and temporal
             dimensions as first and second dimension, respectively. If set to ``False`` (default),
             the data is imported as a 3D array with the temporal dimension as first dimension.
+        extra_attributes : dict, None
+            By default Pynpoint only reads attributes pre-defined in the `get_attributes` function.
+            These only include common attributes such as RA, DEC, DIT, NDIT, etc. If the user wants to
+            read additional attributes from the FITS header, these can be provided as a dictionary in the
+            same format as the output of the `get_attributes` function. This dictionary is then merged
+            with the default attributes before reading the static and non-static
 
         Returns
         -------
@@ -103,6 +111,7 @@ class FitsReadingModule(ReadingModule):
         self.m_check = check
         self.m_filenames = filenames
         self.m_ifs_data = ifs_data
+        self.m_extra_attributes = extra_attributes
 
     @typechecked
     def read_single_file(
@@ -144,7 +153,7 @@ class FitsReadingModule(ReadingModule):
                     warnings.warn(
                         f"No data was found in the PrimaryHDU "
                         f"so reading data from the ImageHDU "
-                        f"at number {i+1} instead."
+                        f"at number {i + 1} instead."
                     )
 
                     images = ensure_native_endian(hdu_list[i + 1].data)
@@ -290,6 +299,7 @@ class FitsReadingModule(ReadingModule):
                 config_port=self._m_config_port,
                 image_out_port=self.m_image_out_port,
                 check=self.m_check,
+                extra_attributes=self.m_extra_attributes,
             )
 
             set_nonstatic_attr(
@@ -297,6 +307,7 @@ class FitsReadingModule(ReadingModule):
                 config_port=self._m_config_port,
                 image_out_port=self.m_image_out_port,
                 check=self.m_check,
+                extra_attributes=self.m_extra_attributes,
             )
 
             set_extra_attr(
