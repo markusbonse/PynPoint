@@ -33,6 +33,10 @@ class TestPypeline:
         header["HIERARCH ESO ADA POSANG END"] = 20.0
         header["HIERARCH ESO SEQ CUMOFFSETX"] = 5.0
         header["HIERARCH ESO SEQ CUMOFFSETY"] = 5.0
+        header["HIERARCH ESO DET WIN STARTX"] = 1
+        header["HIERARCH ESO DET WIN STARTY"] = 1
+        header["HIERARCH ESO DET WIN NX"] = 11
+        header["HIERARCH ESO DET WIN NY"] = 11
         hdu.data = images
         hdu.writeto(self.test_dir + "images.fits")
 
@@ -357,7 +361,7 @@ class TestPypeline:
 
         attr_dict = pipeline.list_attributes("images")
 
-        assert len(attr_dict) == 11
+        assert len(attr_dict) == 15
         assert attr_dict["INSTRUMENT"] == "IMAGER"
         assert attr_dict["PIXSCALE"] == 0.027
         assert attr_dict["NFRAMES"] == [5]
