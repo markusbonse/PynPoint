@@ -187,8 +187,8 @@ class FlatCalibrationModule(ProcessingModule):
         )
 
         # shift all values to greater or equal to +1.0
-        flat_min = np.amin(master)
-        master -= flat_min - 1.0
+        # flat_min = np.amin(master)
+        # master -= flat_min - 1.0
 
         # normalization, median value is 1 afterwards
         master /= np.median(master)
