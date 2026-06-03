@@ -45,6 +45,9 @@ class NearReadingModule(ReadingModule):
         subtract: bool = False,
         crop: Optional[Union[Tuple[int, int, float], Tuple[None, None, float]]] = None,
         combine: Optional[str] = None,
+        extra_attributes: Optional[
+            Dict[str, Dict[str, Union[str, float, int, None]]]
+        ] = None,
     ):
         """
         Parameters
@@ -71,6 +74,12 @@ class NearReadingModule(ReadingModule):
         combine: str, None
             Method ('mean' or 'median') for combining (separately) the chop A and chop B frames
             from each cube into a single frame. All frames are stored if set to None.
+        extra_attributes : dict, None
+            By default Pynpoint only reads attributes pre-defined in the `get_attributes` function.
+            These only include common attributes such as RA, DEC, DIT, NDIT, etc. If the user wants to
+            read additional attributes from the FITS header, these can be provided as a dictionary in the
+            same format as the output of the `get_attributes` function. This dictionary is then merged
+            with the default attributes before reading the static and non-static
 
         Returns
         -------
@@ -447,6 +456,7 @@ class NearReadingModule(ReadingModule):
                     config_port=self._m_config_port,
                     image_out_port=port,
                     check=True,
+                    extra_attributes=self.m_extra_attributes,
                 )
 
                 # set the non-static attributes
@@ -455,6 +465,7 @@ class NearReadingModule(ReadingModule):
                     config_port=self._m_config_port,
                     image_out_port=port,
                     check=True,
+                    extra_attributes=self.m_extra_attributes,
                 )
 
                 # set the remaining attributes
