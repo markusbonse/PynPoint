@@ -95,6 +95,7 @@ class NearReadingModule(ReadingModule):
         self.m_subtract = subtract
         self.m_crop = crop
         self.m_combine = combine
+        self.m_extra_attributes = extra_attributes
 
     @staticmethod
     @typechecked
