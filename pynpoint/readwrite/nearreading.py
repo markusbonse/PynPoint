@@ -10,7 +10,7 @@ import subprocess
 import threading
 import warnings
 
-from typing import Optional, Union, Tuple
+from typing import Optional, Union, Tuple, Dict
 
 import numpy as np
 
